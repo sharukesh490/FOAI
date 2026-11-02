@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Crop Diagnosis — Sign in</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F4F5EC; --surface: #FFFFFF; --surface-2: #EAE8D9; --surface-3: #F0EFE3;
+    --ink: #212B1C; --ink-soft: #5D6353; --ink-faint: #8B9080; --border: #D7D4C0;
+    --moss: #3E5A33; --moss-hover: #34492B; --moss-ink: #FFFFFF; --moss-bg: #E4EBDD; --moss-ink2: #2C4023;
+    --gold: #D9932E; --gold-bg: #FAF0D8; --gold-ink: #7A5610;
+    --red: #B23A2E; --red-bg: #F6DFDA; --red-ink: #7C281E;
+    --font-head: 'Fraunces', serif; --font-body: 'Inter', sans-serif; --font-mono: 'IBM Plex Mono', monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #191D14; --surface: #232A1C; --surface-2: #2C331F; --surface-3: #262D1E;
+      --ink: #EBEADD; --ink-soft: #A6AC97; --ink-faint: #767C67; --border: #3A4230;
+      --moss: #86B26C; --moss-hover: #9AC282; --moss-ink: #12180D; --moss-bg: #2A3521; --moss-ink2: #D9E8CE;
+      --gold: #E7B95E; --gold-bg: #3A3014; --gold-ink: #F3D796;
+      --red: #E17A6A; --red-bg: #3C221E; --red-ink: #F1AFA3;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #191D14; --surface: #232A1C; --surface-2: #2C331F; --surface-3: #262D1E;
+    --ink: #EBEADD; --ink-soft: #A6AC97; --ink-faint: #767C67; --border: #3A4230;
+    --moss: #86B26C; --moss-hover: #9AC282; --moss-ink: #12180D; --moss-bg: #2A3521; --moss-ink2: #D9E8CE;
+    --gold: #E7B95E; --gold-bg: #3A3014; --gold-ink: #F3D796;
+    --red: #E17A6A; --red-bg: #3C221E; --red-ink: #F1AFA3;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-body);
+    padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);
+    line-height: 1.55; -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 32px 20px 56px; }
+  header { margin-bottom: 26px; }
+  .eyebrow { font-family: var(--font-mono); font-size: 12px; color: var(--moss); margin-bottom: 8px; }
+  h1 { font-family: var(--font-head); font-weight: 600; font-size: 32px; margin: 0 0 8px; letter-spacing: -0.01em; }
+  .sub { color: var(--ink-soft); font-size: 14.5px; max-width: 62ch; }
+
+  .grid { display: grid; grid-template-columns: 360px 1fr; gap: 22px; align-items: start; margin-top: 22px; }
+  @media (max-width: 780px) { .grid { grid-template-columns: 1fr; } }
+  .left { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 20px); }
+  @media (max-width: 780px) { .left { position: static; } }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+  .card + .card { margin-top: 18px; }
+
+  label.field { display: block; font-size: 12px; font-weight: 500; color: var(--ink-soft); margin-bottom: 10px; }
+
+  .tabs { display: flex; gap: 6px; margin-bottom: 12px; background: var(--surface-3); padding: 4px; border-radius: 9px; }
+  .tab {
+    flex: 1; text-align: center; padding: 7px 0; border-radius: 6px; font-size: 13px; font-weight: 500;
+    color: var(--ink-soft); cursor: pointer; user-select: none; border: none; background: transparent;
+    font-family: var(--font-body);
+  }
+  .tab.on { background: var(--surface); color: var(--ink); box-shadow: 0 0 0 1px var(--border); }
+
+  .crop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 22px; }
+  .crop-card {
+    display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 9px;
+    border: 1px solid var(--border); background: var(--surface-2); cursor: pointer; text-align: left;
+    font-family: var(--font-body); font-size: 13.5px; font-weight: 500; color: var(--ink-soft);
+  }
+  .crop-card.on { background: var(--moss-bg); border-color: var(--moss); color: var(--moss-ink2); }
+  .crop-avatar {
+    width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-head); font-weight: 600; font-size: 13px; color: #fff; flex-shrink: 0;
+  }
+  .crop-card:active { transform: scale(0.98); }
+
+  .symptoms-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .count-pill { font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-faint); background: var(--surface-3); padding: 2px 8px; border-radius: 100px; }
+  input.search {
+    width: 100%; padding: 8px 11px; border-radius: 8px; border: 1px solid var(--border);
+    background: var(--surface-2); color: var(--ink); font-size: 13.5px; margin-bottom: 10px; font-family: var(--font-body);
+  }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; min-height: 34px; }
+  .chip {
+    border: 1px solid var(--border); background: var(--surface-2); color: var(--ink-soft);
+    font-size: 13px; padding: 7px 13px; border-radius: 100px; cursor: pointer; user-select: none;
+    transition: background 0.12s, color 0.12s, border-color 0.12s;
+  }
+  .chip.on { background: var(--moss); border-color: var(--moss); color: var(--moss-ink); font-weight: 500; }
+  .chip:active { transform: scale(0.97); }
+  .no-match { color: var(--ink-faint); font-size: 13px; }
+
+  button.run {
+    width: 100%; padding: 13px; border-radius: 8px; border: none; background: var(--moss); color: var(--moss-ink);
+    font-family: var(--font-body); font-weight: 600; font-size: 14.5px; cursor: pointer; letter-spacing: 0.01em;
+  }
+  button.run:hover { background: var(--moss-hover); }
+  button.run:active { transform: scale(0.99); }
+  button.run:disabled { opacity: 0.5; cursor: default; }
+
+  h2 { font-family: var(--font-head); font-weight: 600; font-size: 18px; margin: 0 0 4px; }
+  .hint { color: var(--ink-faint); font-size: 13.5px; margin: 8px 0 0; }
+  .warn { color: var(--red-ink); font-size: 13px; margin-top: 8px; }
+
+  @keyframes rise { to { opacity: 1; transform: translateY(0); } }
+
+  .result { display: none; }
+  .result.show { display: block; }
+  .result-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+  .diag { font-family: var(--font-head); font-size: 24px; font-weight: 700; margin: 0 0 6px; }
+  .diag-sub { font-size: 13px; color: var(--ink-soft); }
+  .severity { font-size: 11.5px; font-weight: 600; padding: 5px 12px; border-radius: 100px; white-space: nowrap; text-transform: uppercase; letter-spacing: 0.03em; }
+  .severity.low { background: var(--moss-bg); color: var(--moss-ink2); }
+  .severity.medium { background: var(--gold-bg); color: var(--gold-ink); }
+  .severity.high { background: var(--red-bg); color: var(--red-ink); }
+
+  .conf-row { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+  .conf-track { flex: 1; height: 8px; border-radius: 100px; background: var(--surface-3); overflow: hidden; }
+  .conf-fill { height: 100%; background: var(--moss); border-radius: 100px; width: 0; transition: width 0.6s ease; }
+  .conf-label { font-family: var(--font-mono); font-size: 13px; font-weight: 500; min-width: 46px; text-align: right; }
+
+  .section-label { font-size: 12px; font-weight: 600; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.03em; margin: 0 0 8px; }
+  ul.treatment, ul.prevention { margin: 0 0 18px; padding-left: 18px; font-size: 14px; }
+  ul.treatment li, ul.prevention li { margin-bottom: 6px; }
+
+  .alt-list { display: flex; flex-direction: column; gap: 8px; margin-top: 6px; }
+  .alt-row { display: flex; align-items: center; justify-content: space-between; padding: 9px 12px; background: var(--surface-2); border-radius: 8px; font-size: 13.5px; }
+  .alt-row .alt-conf { font-family: var(--font-mono); font-size: 12px; color: var(--ink-faint); }
+
+  .bfs-note { border-top: 1px solid var(--border); margin-top: 18px; padding-top: 14px; font-size: 13px; color: var(--ink-faint); }
+
+  /* ===== Login / account screens ===== */
+  [hidden] { display: none !important; }
+  :root { --brand-bg: #1F4D36; --brand-ink: #F1F5EC; --brand-soft: #B9CDB9; --brand-line: rgba(255,255,255,0.16); }
+  .auth { min-height: 100vh; min-height: 100dvh; display: grid; grid-template-columns: 1.05fr 1fr; background: var(--bg); }
+  @media (max-width: 820px) { .auth { grid-template-columns: 1fr; } }
+  .auth-brand {
+    background: var(--brand-bg); color: var(--brand-ink); padding: 48px 44px;
+    display: flex; flex-direction: column; justify-content: space-between; gap: 32px;
+  }
+  @media (max-width: 820px) { .auth-brand { padding: 28px 22px; gap: 18px; } .auth-brand .brand-points { display: none; } }
+  .brand-mark { width: 44px; height: 44px; border-radius: 12px; background: rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; margin-bottom: 22px; }
+  .brand-mark svg { width: 24px; height: 24px; }
+  .brand-eyebrow { font-family: var(--font-mono); font-size: 12px; color: var(--brand-soft); margin-bottom: 10px; }
+  .auth-brand h1 { font-family: var(--font-head); font-size: 38px; line-height: 1.1; margin: 0 0 14px; font-weight: 600; letter-spacing: -0.01em; }
+  @media (max-width: 820px) { .auth-brand h1 { font-size: 28px; } }
+  .auth-brand p { color: var(--brand-soft); font-size: 15px; max-width: 44ch; margin: 0; }
+  .brand-points { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+  .brand-points li { display: flex; gap: 12px; align-items: baseline; font-size: 14px; padding-top: 12px; border-top: 1px solid var(--brand-line); }
+  .brand-points b { font-family: var(--font-mono); font-weight: 500; font-size: 12px; color: var(--gold); min-width: 54px; }
+
+  .auth-main { display: flex; align-items: center; justify-content: center; padding: 32px 22px; padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px)); }
+  .auth-card { width: 100%; max-width: 400px; }
+  .auth-card h2 { font-family: var(--font-head); font-size: 26px; margin: 0 0 4px; }
+  .auth-sub { color: var(--ink-soft); font-size: 14px; margin: 0 0 22px; }
+  .auth-tabs { display: flex; gap: 4px; background: var(--surface-3); padding: 4px; border-radius: 9px; margin-bottom: 22px; }
+  .auth-tab { flex: 1; padding: 8px 0; border: none; background: transparent; border-radius: 6px; font: 500 13.5px var(--font-body); color: var(--ink-soft); cursor: pointer; }
+  .auth-tab[aria-selected="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 0 0 1px var(--border); }
+  .auth-field { margin-bottom: 14px; }
+  .auth-field label { display: block; font-size: 12.5px; font-weight: 500; color: var(--ink-soft); margin-bottom: 6px; }
+  .auth-input {
+    width: 100%; padding: 11px 12px; border-radius: 8px; border: 1px solid var(--border);
+    background: var(--surface); color: var(--ink); font: 400 15px var(--font-body);
+  }
+  .auth-input:focus-visible, .auth-tab:focus-visible, .btn-ghost:focus-visible, .pw-toggle:focus-visible, button.run:focus-visible { outline: 2px solid var(--moss); outline-offset: 2px; }
+  .pw-wrap { position: relative; }
+  .pw-wrap .auth-input { padding-right: 62px; }
+  .pw-toggle { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); border: none; background: transparent; color: var(--moss); font: 600 12.5px var(--font-body); cursor: pointer; padding: 6px 8px; }
+  .auth-error { color: var(--red-ink); background: var(--red-bg); padding: 9px 12px; border-radius: 8px; font-size: 13px; margin-bottom: 14px; }
+  .auth-row { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink-soft); margin: 4px 0 18px; }
+  .auth-row input { width: 16px; height: 16px; accent-color: var(--moss); }
+  .auth-demo { margin-top: 18px; padding: 12px 14px; border: 1px dashed var(--border); border-radius: 9px; font-size: 13px; color: var(--ink-soft); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .auth-demo code { font-family: var(--font-mono); font-size: 12px; color: var(--ink); }
+  .auth-note { margin: 18px 0 0; font-size: 12px; color: var(--ink-faint); }
+  .userbar { display: flex; align-items: center; justify-content: flex-end; gap: 12px; margin-bottom: 14px; font-size: 13px; color: var(--ink-soft); }
+  .userbar .who { font-weight: 500; color: var(--ink); }
+  .btn-ghost { border: 1px solid var(--border); background: transparent; color: var(--ink); padding: 6px 13px; border-radius: 8px; font: 500 13px var(--font-body); cursor: pointer; }
+  .btn-ghost:hover { background: var(--surface-3); }
+</style>
+</head>
+<body>
+<div id="authScreen" class="auth" hidden>
+  <section class="auth-brand" aria-label="About this project">
+    <div>
+      <div class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#F1F5EC" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19C5 10 10 5 20 5c0 10-5 15-13 15-1.2 0-2-.8-2-1z"/><path d="M5 19c3-5 6-8 10-10"/></svg>
+      </div>
+      <div class="brand-eyebrow">AI course project · Units I–III</div>
+      <h1>Crop disease diagnosis</h1>
+      <p>Sign in to rank likely diseases from the symptoms you observe and get treatment and prevention advice for your crop.</p>
+    </div>
+  </section>
+
+  <main class="auth-main">
+    <div class="auth-card">
+      <h2 id="authTitle">Welcome back</h2>
+      <p class="auth-sub" id="authSub">Sign in to continue to the diagnosis tool.</p>
+
+      <div class="auth-tabs" role="tablist" aria-label="Account">
+        <button type="button" class="auth-tab" role="tab" id="tabLogin" aria-selected="true" aria-controls="loginForm">Sign in</button>
+        <button type="button" class="auth-tab" role="tab" id="tabRegister" aria-selected="false" aria-controls="registerForm">Create account</button>
+      </div>
+
+      <form id="loginForm" role="tabpanel" aria-labelledby="tabLogin" novalidate>
+        <div class="auth-error" id="loginError" role="alert" aria-live="polite" hidden></div>
+        <div class="auth-field">
+          <label for="loginUser">Username</label>
+          <input class="auth-input" id="loginUser" type="text" autocomplete="username" autocapitalize="none" spellcheck="false">
+        </div>
+        <div class="auth-field">
+          <label for="loginPass">Password</label>
+          <div class="pw-wrap">
+            <input class="auth-input" id="loginPass" type="password" autocomplete="current-password">
+            <button type="button" class="pw-toggle" data-target="loginPass" aria-label="Show password">Show</button>
+          </div>
+        </div>
+        <label class="auth-row"><input type="checkbox" id="loginRemember"> Keep me signed in on this device</label>
+        <button type="submit" class="run" id="loginBtn">Sign in</button>
+        <div class="auth-demo">
+          <span>Demo account: <code>demo</code> / <code>demo123</code></span>
+          <button type="button" class="btn-ghost" id="useDemo">Use demo</button>
+        </div>
+      </form>
+
+      <form id="registerForm" role="tabpanel" aria-labelledby="tabRegister" novalidate hidden>
+        <div class="auth-error" id="registerError" role="alert" aria-live="polite" hidden></div>
+        <div class="auth-field">
+          <label for="regName">Full name</label>
+          <input class="auth-input" id="regName" type="text" autocomplete="name">
+        </div>
+        <div class="auth-field">
+          <label for="regUser">Username</label>
+          <input class="auth-input" id="regUser" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" aria-describedby="regUserHint">
+          <div class="auth-note" id="regUserHint" style="margin-top:6px;">3–20 characters: letters, numbers, underscore.</div>
+        </div>
+        <div class="auth-field">
+          <label for="regPass">Password</label>
+          <div class="pw-wrap">
+            <input class="auth-input" id="regPass" type="password" autocomplete="new-password">
+            <button type="button" class="pw-toggle" data-target="regPass" aria-label="Show password">Show</button>
+          </div>
+        </div>
+        <div class="auth-field">
+          <label for="regPass2">Confirm password</label>
+          <input class="auth-input" id="regPass2" type="password" autocomplete="new-password">
+        </div>
+        <button type="submit" class="run" id="registerBtn">Create account</button>
+      </form>
+
+      <p class="auth-note">Demo sign-in: accounts are stored only in this browser and passwords are hashed, but there is no server, so do not reuse a real password.</p>
+    </div>
+  </main>
+</div>
+
+<div id="appRoot" hidden>
+<div class="wrap">
+  <header>
+    <div class="userbar">
+      <span>Signed in as <span class="who" id="whoName"></span></span>
+      <button type="button" class="btn-ghost" id="logoutBtn">Log out</button>
+    </div>
+    <div class="eyebrow">Production system (Unit I) · A* search (Unit II)</div>
+    <h1>Crop disease diagnosis</h1>
+    <div class="sub">A* ranks every candidate disease by how well its known symptom set matches what you report — instead of just returning the first hit the way plain BFS would.</div>
+  </header>
+
+  <div class="grid">
+    <div class="left">
+      <div class="card">
+        <label class="field">Crop</label>
+        <div class="tabs" id="tabs"></div>
+        <div class="crop-grid" id="cropGrid"></div>
+
+        <div class="symptoms-head">
+          <label class="field" style="margin:0;">Observed symptoms</label>
+          <span class="count-pill" id="count">0 selected</span>
+        </div>
+        <input type="text" class="search" id="symSearch" placeholder="Filter symptoms…">
+        <div class="chips" id="symptoms"></div>
+
+        <button class="run" id="run">Run</button>
+        <div class="warn" id="warn" style="display:none;">Select at least one symptom first.</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card" id="emptyCard">
+        <h2>Diagnosis</h2>
+        <p class="hint" id="hint">Pick a crop and symptoms on the left, then press Run to see the recommended diagnosis and treatment.</p>
+      </div>
+
+      <div class="card result" id="result">
+        <div class="result-head">
+          <div>
+            <div class="diag" id="diagName"></div>
+            <div class="diag-sub" id="diagCrop"></div>
+          </div>
+          <div class="severity" id="diagSeverity"></div>
+        </div>
+        <div class="conf-row">
+          <div class="conf-track"><div class="conf-fill" id="confFill"></div></div>
+          <div class="conf-label" id="confLabel"></div>
+        </div>
+
+        <p class="section-label">Recommended treatment</p>
+        <ul class="treatment" id="diagTreatment"></ul>
+
+        <p class="section-label">Prevention</p>
+        <ul class="prevention" id="diagPrevention"></ul>
+
+        <p class="section-label" id="altLabel" style="display:none;">Other possible matches</p>
+        <div class="alt-list" id="altList"></div>
+
+        <div class="bfs-note" id="bfsNote"></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+const KB = {
+  "Tomato": { cat: "Vegetable", color: "#3E5A33", diseases: {
+    "Early Blight": { symptoms: ["yellow_leaves","brown_spots","dark_edges"], severity: "medium",
+      treatment: ["Remove and destroy affected leaves","Apply a copper-based or chlorothalonil fungicide"],
+      prevention: ["Rotate crops away from tomato/potato beds each season","Water at the base rather than overhead"] },
+    "Leaf Spot": { symptoms: ["yellow_leaves","brown_spots"], severity: "low",
+      treatment: ["Avoid overhead watering","Apply neem oil or a recommended fungicide"],
+      prevention: ["Space plants for good airflow","Remove plant debris after harvest"] },
+    "Late Blight": { symptoms: ["dark_edges","wilting","white_mold"], severity: "high",
+      treatment: ["Destroy infected plants immediately","Apply a systemic fungicide (e.g. metalaxyl)"],
+      prevention: ["Avoid working in fields when foliage is wet","Use certified disease-free transplants"] }
+  }},
+  "Potato": { cat: "Vegetable", color: "#5C7A45", diseases: {
+    "Late Blight": { symptoms: ["dark_edges","wilting","white_mold"], severity: "high",
+      treatment: ["Destroy infected foliage","Apply fungicide preventively during humid weeks"],
+      prevention: ["Hill soil well over developing tubers","Avoid overhead irrigation"] },
+    "Early Blight": { symptoms: ["yellow_leaves","brown_spots","dark_edges"], severity: "medium",
+      treatment: ["Remove lower infected leaves","Ensure balanced soil nitrogen"],
+      prevention: ["Rotate with non-solanaceous crops","Remove volunteer plants and weeds"] },
+    "Black Scurf": { symptoms: ["stunted_growth","dark_lesions_on_stem"], severity: "low",
+      treatment: ["Use certified seed potatoes","Improve soil drainage"],
+      prevention: ["Plant into warm soil to speed emergence","Clean equipment between fields"] }
+  }},
+  "Chili": { cat: "Vegetable", color: "#B8622B", diseases: {
+    "Anthracnose": { symptoms: ["sunken_spots","dark_edges","fruit_rot"], severity: "high",
+      treatment: ["Remove and destroy infected fruit","Apply a protectant fungicide before flowering"],
+      prevention: ["Avoid overhead irrigation near harvest","Use disease-free certified seed"] },
+    "Powdery Mildew": { symptoms: ["white_powder_coating","yellow_leaves"], severity: "low",
+      treatment: ["Apply sulfur-based fungicide","Improve airflow between plants"],
+      prevention: ["Avoid dense planting","Choose resistant varieties where available"] }
+  }},
+  "Brinjal": { cat: "Vegetable", color: "#6B4E85", diseases: {
+    "Fruit Rot": { symptoms: ["sunken_spots","fruit_rot","wilting"], severity: "high",
+      treatment: ["Remove and destroy infected fruit promptly","Apply recommended fungicide spray"],
+      prevention: ["Avoid fruit contact with wet soil","Practice crop rotation"] },
+    "Bacterial Wilt": { symptoms: ["wilting","stunted_growth"], severity: "medium",
+      treatment: ["Remove and destroy wilted plants","Improve field drainage"],
+      prevention: ["Use resistant rootstock where available","Avoid waterlogged fields"] }
+  }},
+  "Onion": { cat: "Vegetable", color: "#C7942E", diseases: {
+    "Purple Blotch": { symptoms: ["dark_edges","brown_spots","wilting"], severity: "medium",
+      treatment: ["Apply a protectant fungicide at first sign","Avoid overhead irrigation"],
+      prevention: ["Rotate with non-allium crops","Ensure good field drainage"] },
+    "Downy Mildew": { symptoms: ["yellow_leaves","white_mold"], severity: "medium",
+      treatment: ["Apply systemic fungicide early","Remove and destroy infected plants"],
+      prevention: ["Avoid dense planting for airflow","Use certified disease-free sets"] }
+  }},
+  "Cabbage": { cat: "Vegetable", color: "#4E7A5E", diseases: {
+    "Black Rot": { symptoms: ["yellow_leaves","dark_lesions_on_stem","wilting"], severity: "high",
+      treatment: ["Remove and destroy infected plants","Avoid working fields when wet"],
+      prevention: ["Use certified disease-free seed","Rotate with non-brassica crops"] },
+    "Clubroot": { symptoms: ["stunted_growth","wilting"], severity: "medium",
+      treatment: ["Improve soil drainage","Adjust soil pH toward neutral/alkaline"],
+      prevention: ["Rotate brassicas on a long cycle","Disinfect tools between fields"] }
+  }},
+  "Wheat": { cat: "Grain", color: "#D9932E", diseases: {
+    "Rust": { symptoms: ["orange_pustules","yellow_leaves","stunted_growth"], severity: "high",
+      treatment: ["Apply triazole-based fungicide","Plant rust-resistant varieties"],
+      prevention: ["Scout fields weekly from tillering onward","Destroy volunteer wheat between seasons"] },
+    "Powdery Mildew": { symptoms: ["white_powder_coating","yellow_leaves"], severity: "low",
+      treatment: ["Apply sulfur-based fungicide","Avoid dense sowing"],
+      prevention: ["Choose resistant cultivars","Avoid excess nitrogen"] }
+  }},
+  "Rice": { cat: "Grain", color: "#3B7A6B", diseases: {
+    "Blast": { symptoms: ["brown_spots","dark_edges","white_mold"], severity: "high",
+      treatment: ["Apply tricyclazole fungicide","Avoid excess nitrogen application"],
+      prevention: ["Maintain shallow standing water consistently","Balance nitrogen with potassium/silica"] },
+    "Bacterial Leaf Blight": { symptoms: ["yellow_leaves","wilting","dark_lesions_on_stem"], severity: "medium",
+      treatment: ["Use resistant varieties","Apply copper oxychloride spray"],
+      prevention: ["Avoid excess nitrogen fertilization","Use clean, disease-free seed"] }
+  }}
+};
+
+const cropGridEl = document.getElementById('cropGrid');
+const tabsEl = document.getElementById('tabs');
+const symptomsEl = document.getElementById('symptoms');
+const symSearch = document.getElementById('symSearch');
+const countEl = document.getElementById('count');
+const runBtn = document.getElementById('run');
+const warnEl = document.getElementById('warn');
+const emptyCard = document.getElementById('emptyCard');
+const hintEl = document.getElementById('hint');
+const resultEl = document.getElementById('result');
+
+let activeCat = 'All';
+let activeCrop = null;
+
+function label(s) { return s.replace(/_/g, ' '); }
+
+const CATEGORIES = ['All', ...new Set(Object.values(KB).map(c => c.cat))];
+
+function renderTabs() {
+  tabsEl.innerHTML = '';
+  CATEGORIES.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className = 'tab' + (cat === activeCat ? ' on' : '');
+    btn.textContent = cat === 'All' ? 'All' : cat + 's';
+    btn.addEventListener('click', () => { activeCat = cat; renderTabs(); renderCropGrid(); });
+    tabsEl.appendChild(btn);
+  });
+}
+
+function renderCropGrid() {
+  cropGridEl.innerHTML = '';
+  const names = Object.keys(KB).filter(n => activeCat === 'All' || KB[n].cat === activeCat);
+  names.forEach(name => {
+    const card = document.createElement('button');
+    card.type = 'button';
+    card.className = 'crop-card' + (name === activeCrop ? ' on' : '');
+    card.innerHTML = `<span class="crop-avatar" style="background:${KB[name].color}">${name[0]}</span>${name}`;
+    card.addEventListener('click', () => { activeCrop = name; renderCropGrid(); renderSymptoms(); });
+    cropGridEl.appendChild(card);
+  });
+  if (!activeCrop || !names.includes(activeCrop)) {
+    activeCrop = names[0] || null;
+    renderCropGrid();
+  }
+}
+
+function allSymptomsFor(crop) {
+  const set = new Set();
+  Object.values(KB[crop].diseases).forEach(d => d.symptoms.forEach(s => set.add(s)));
+  return Array.from(set).sort();
+}
+
+function updateCount() {
+  const n = symptomsEl.querySelectorAll('.chip.on').length;
+  countEl.textContent = n + (n === 1 ? ' selected' : ' selected');
+}
+
+function renderSymptoms() {
+  if (!activeCrop) return;
+  const filter = symSearch.value.trim().toLowerCase();
+  const prevOn = new Set(Array.from(symptomsEl.querySelectorAll('.chip.on')).map(c => c.dataset.symptom));
+  symptomsEl.innerHTML = '';
+  const list = allSymptomsFor(activeCrop).filter(s => label(s).includes(filter));
+  if (list.length === 0) {
+    const p = document.createElement('div');
+    p.className = 'no-match';
+    p.textContent = 'No symptoms match your filter.';
+    symptomsEl.appendChild(p);
+  }
+  list.forEach(s => {
+    const chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'chip' + (prevOn.has(s) ? ' on' : '');
+    chip.textContent = label(s);
+    chip.dataset.symptom = s;
+    chip.addEventListener('click', () => { chip.classList.toggle('on'); updateCount(); });
+    symptomsEl.appendChild(chip);
+  });
+  updateCount();
+  resultEl.classList.remove('show');
+  emptyCard.style.display = 'block';
+  warnEl.style.display = 'none';
+}
+
+symSearch.addEventListener('input', renderSymptoms);
+renderTabs();
+renderCropGrid();
+renderSymptoms();
+
+function heuristic(diseaseSymptoms, userSymptoms) {
+  const a = new Set(diseaseSymptoms), b = new Set(userSymptoms);
+  let diff = 0;
+  a.forEach(x => { if (!b.has(x)) diff++; });
+  b.forEach(x => { if (!a.has(x)) diff++; });
+  return diff;
+}
+
+function runSearch() {
+  const crop = activeCrop;
+  const checked = Array.from(symptomsEl.querySelectorAll('.chip.on')).map(c => c.dataset.symptom);
+  if (checked.length === 0) {
+    warnEl.style.display = 'block';
+    return;
+  }
+  warnEl.style.display = 'none';
+  emptyCard.style.display = 'none';
+
+  const candidates = Object.entries(KB[crop].diseases).map(([name, data]) => {
+    const g = 1;
+    const h = heuristic(data.symptoms, checked);
+    const matched = data.symptoms.filter(s => checked.includes(s)).length;
+    const confidence = Math.round((matched / data.symptoms.length) * 1000) / 10;
+    return { name, data, g, h, f: g + h, confidence };
+  });
+
+  const sorted = [...candidates].sort((a, b) => a.f - b.f);
+  showResult(sorted, crop, checked);
+}
+
+function showResult(sorted, crop, checked) {
+  const best = sorted[0];
+  document.getElementById('diagName').textContent = best.name;
+  document.getElementById('diagCrop').textContent = `${crop} · f(n)=${best.f}`;
+  const sevEl = document.getElementById('diagSeverity');
+  sevEl.textContent = best.data.severity;
+  sevEl.className = 'severity ' + best.data.severity;
+
+  const confFill = document.getElementById('confFill');
+  const confLabel = document.getElementById('confLabel');
+  confFill.style.width = '0%';
+  confLabel.textContent = best.confidence + '%';
+  requestAnimationFrame(() => { confFill.style.width = best.confidence + '%'; });
+
+  const tUl = document.getElementById('diagTreatment');
+  tUl.innerHTML = '';
+  best.data.treatment.forEach(t => { const li = document.createElement('li'); li.textContent = t; tUl.appendChild(li); });
+
+  const pUl = document.getElementById('diagPrevention');
+  pUl.innerHTML = '';
+  best.data.prevention.forEach(p => { const li = document.createElement('li'); li.textContent = p; pUl.appendChild(li); });
+
+  const altLabel = document.getElementById('altLabel');
+  const altList = document.getElementById('altList');
+  altList.innerHTML = '';
+  const rest = sorted.slice(1);
+  if (rest.length > 0) {
+    altLabel.style.display = 'block';
+    rest.forEach(c => {
+      const row = document.createElement('div');
+      row.className = 'alt-row';
+      row.innerHTML = `<span>${c.name}</span><span class="alt-conf">${c.confidence}% match · f=${c.f}</span>`;
+      altList.appendChild(row);
+    });
+  } else {
+    altLabel.style.display = 'none';
+  }
+
+  const bfsFirst = Object.entries(KB[crop].diseases).find(([name, data]) => data.symptoms.some(s => checked.includes(s)));
+  document.getElementById('bfsNote').textContent = bfsFirst
+    ? `For comparison: plain BFS would simply return "${bfsFirst[0]}" — the first disease sharing any symptom, with no confidence score or ranked alternatives.`
+    : '';
+
+  resultEl.classList.add('show');
+}
+
+runBtn.addEventListener('click', runSearch);
+/*AUTH_CORE_START*/
+const AuthCore = (() => {
+  const USERS_KEY = 'cdd_users', SESSION_KEY = 'cdd_session';
+  const mem = { users: {}, session: null };
+  const sget = (store, k) => { try { return window[store].getItem(k); } catch (e) { return null; } };
+  const sset = (store, k, v) => { try { window[store].setItem(k, v); } catch (e) {} };
+  const sdel = (store, k) => { try { window[store].removeItem(k); } catch (e) {} };
+
+  function loadUsers() {
+    const raw = sget('localStorage', USERS_KEY);
+    if (raw) { try { return JSON.parse(raw); } catch (e) {} }
+    return mem.users;
+  }
+  function saveUsers(u) { mem.users = u; sset('localStorage', USERS_KEY, JSON.stringify(u)); }
+
+  function randomSalt() {
+    const a = new Uint8Array(12);
+    if (typeof crypto !== 'undefined' && crypto.getRandomValues) crypto.getRandomValues(a);
+    else for (let i = 0; i < a.length; i++) a[i] = Math.floor(Math.random() * 256);
+    return Array.from(a, b => b.toString(16).padStart(2, '0')).join('');
+  }
+  async function hashPw(pw, salt) {
+    const data = new TextEncoder().encode(salt + ':' + pw);
+    if (typeof crypto !== 'undefined' && crypto.subtle) {
+      const buf = await crypto.subtle.digest('SHA-256', data);
+      return Array.from(new Uint8Array(buf), b => b.toString(16).padStart(2, '0')).join('');
+    }
+    let h = 5381; for (const b of data) h = ((h << 5) + h + b) >>> 0;
+    return 'f' + h.toString(16);
+  }
+
+  async function ensureDemo() {
+    const users = loadUsers();
+    if (!users.demo) {
+      const salt = randomSalt();
+      users.demo = { name: 'Demo Farmer', salt, hash: await hashPw('demo123', salt) };
+      saveUsers(users);
+    }
+  }
+
+  let fails = 0, lockUntil = 0;
+  async function login(username, password) {
+    const now = Date.now();
+    if (now < lockUntil) return { ok: false, error: 'Too many attempts. Try again in ' + Math.ceil((lockUntil - now) / 1000) + ' seconds.' };
+    const u = (username || '').trim().toLowerCase();
+    if (!u || !password) return { ok: false, error: 'Enter your username and password.' };
+    const rec = loadUsers()[u];
+    const ok = rec && (await hashPw(password, rec.salt)) === rec.hash;
+    if (!ok) {
+      fails++;
+      if (fails >= 5) { fails = 0; lockUntil = Date.now() + 10000; return { ok: false, error: 'Too many attempts. Try again in 10 seconds.' }; }
+      return { ok: false, error: 'Incorrect username or password.' };
+    }
+    fails = 0;
+    return { ok: true, user: { username: u, name: rec.name } };
+  }
+
+  async function register(name, username, password, confirm) {
+    name = (name || '').trim(); const u = (username || '').trim().toLowerCase();
+    if (name.length < 2) return { ok: false, error: 'Enter your full name.' };
+    if (!/^[a-z0-9_]{3,20}$/.test(u)) return { ok: false, error: 'Username must be 3–20 letters, numbers, or underscores.' };
+    if ((password || '').length < 6) return { ok: false, error: 'Password must be at least 6 characters.' };
+    if (password !== confirm) return { ok: false, error: 'The two passwords do not match.' };
+    const users = loadUsers();
+    if (users[u]) return { ok: false, error: 'That username is already taken.' };
+    const salt = randomSalt();
+    users[u] = { name, salt, hash: await hashPw(password, salt) };
+    saveUsers(users);
+    return { ok: true, user: { username: u, name } };
+  }
+
+  function setSession(username, persist) {
+    mem.session = username;
+    sdel('sessionStorage', SESSION_KEY); sdel('localStorage', SESSION_KEY);
+    if (username) sset(persist ? 'localStorage' : 'sessionStorage', SESSION_KEY, username);
+  }
+  function currentUser() {
+    const name = sget('sessionStorage', SESSION_KEY) || sget('localStorage', SESSION_KEY) || mem.session;
+    if (!name) return null;
+    const rec = loadUsers()[name];
+    return rec ? { username: name, name: rec.name } : null;
+  }
+  return { ensureDemo, login, register, setSession, currentUser };
+})();
+/*AUTH_CORE_END*/
+
+// ===== Login screen wiring =====
+(() => {
+  const authScreen = document.getElementById('authScreen');
+  const appRoot = document.getElementById('appRoot');
+  const loginForm = document.getElementById('loginForm');
+  const registerForm = document.getElementById('registerForm');
+  const tabLogin = document.getElementById('tabLogin');
+  const tabRegister = document.getElementById('tabRegister');
+  const loginError = document.getElementById('loginError');
+  const registerError = document.getElementById('registerError');
+
+  function showError(el, msg) { el.textContent = msg; el.hidden = !msg; }
+
+  function setTab(which) {
+    const isLogin = which === 'login';
+    tabLogin.setAttribute('aria-selected', String(isLogin));
+    tabRegister.setAttribute('aria-selected', String(!isLogin));
+    loginForm.hidden = !isLogin; registerForm.hidden = isLogin;
+    document.getElementById('authTitle').textContent = isLogin ? 'Welcome back' : 'Create your account';
+    document.getElementById('authSub').textContent = isLogin ? 'Sign in to continue to the diagnosis tool.' : 'It takes a few seconds. Your account stays in this browser.';
+    showError(loginError, ''); showError(registerError, '');
+    (isLogin ? document.getElementById('loginUser') : document.getElementById('regName')).focus();
+  }
+  tabLogin.addEventListener('click', () => setTab('login'));
+  tabRegister.addEventListener('click', () => setTab('register'));
+
+  document.querySelectorAll('.pw-toggle').forEach(btn => btn.addEventListener('click', () => {
+    const input = document.getElementById(btn.dataset.target);
+    const show = input.type === 'password';
+    input.type = show ? 'text' : 'password';
+    btn.textContent = show ? 'Hide' : 'Show';
+    btn.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+  }));
+
+  document.getElementById('useDemo').addEventListener('click', () => {
+    document.getElementById('loginUser').value = 'demo';
+    document.getElementById('loginPass').value = 'demo123';
+    document.getElementById('loginBtn').focus();
+  });
+
+  function showApp(user) {
+    document.getElementById('whoName').textContent = user.name;
+    authScreen.hidden = true; appRoot.hidden = false;
+    window.scrollTo(0, 0);
+  }
+  function showAuth() {
+    appRoot.hidden = true; authScreen.hidden = false;
+    loginForm.reset(); registerForm.reset();
+    setTab('login');
+  }
+
+  loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('loginBtn'); btn.disabled = true;
+    const r = await AuthCore.login(document.getElementById('loginUser').value, document.getElementById('loginPass').value);
+    btn.disabled = false;
+    if (!r.ok) { showError(loginError, r.error); document.getElementById('loginPass').select(); return; }
+    AuthCore.setSession(r.user.username, document.getElementById('loginRemember').checked);
+    showError(loginError, ''); loginForm.reset(); showApp(r.user);
+  });
+
+  registerForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('registerBtn'); btn.disabled = true;
+    const r = await AuthCore.register(
+      document.getElementById('regName').value, document.getElementById('regUser').value,
+      document.getElementById('regPass').value, document.getElementById('regPass2').value);
+    btn.disabled = false;
+    if (!r.ok) { showError(registerError, r.error); return; }
+    AuthCore.setSession(r.user.username, false);
+    registerForm.reset(); showApp(r.user);
+  });
+
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    AuthCore.setSession(null);
+    // clear the previous diagnosis so the next person starts fresh
+    resultEl.classList.remove('show'); emptyCard.style.display = 'block';
+    showAuth();
+  });
+
+  // start: make sure the demo account exists, then show the right screen
+  AuthCore.ensureDemo().then(() => {
+    const user = AuthCore.currentUser();
+    if (user) showApp(user); else showAuth();
+  });
+})();
+</script>
+</body>
+</html>
